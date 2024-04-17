@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 		title = "TODO List API",
 		version = "1.0",
 		description = "Documentando uma API básica de cadastro de tarefas a serem realizadas",
-		contact = @Contact(name = "Davison", email = "dcbarros11@gmail.com", url = "https://www.github.com/dcbarros")
+		contact = @Contact(name = "Davison Cavalcante", email = "dcbarros11@gmail.com", url = "https://github.com/dcbarros/to-doAPI")
 	)
 )
 public class ToDoApplication {
