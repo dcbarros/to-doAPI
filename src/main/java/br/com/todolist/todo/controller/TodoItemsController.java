@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -79,8 +83,33 @@ public class TodoItemsController {
         )
     })
     public ResponseEntity<TodoItem> getItemByUUID(@PathVariable UUID uuid) {
-        return ResponseEntity.ok(todoItemService.getItemById(uuid));
+        try {
+            return ResponseEntity.ok(todoItemService.getItemById(uuid));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
+
+    @GetMapping("/title")
+    @Operation(summary = "Rota responsável por buscar itens que contém os paramétros passados no titulo")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200", 
+            description = "Item cadastrado",
+            content = {
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = TodoItem.class)
+                )
+            }
+        )
+    })
+    public ResponseEntity<Iterable<TodoItem>> getMethodName(@RequestParam(value = "title-params") String param) {
+        return ResponseEntity.ok(todoItemService.getItemsByTitle(param));
+    }
+    
 
     @PostMapping
     @Operation(summary = "Rota responsável pelo cadastro do item")
@@ -128,7 +157,7 @@ public class TodoItemsController {
         }
     }
 
-    @PutMapping("isFinishTask/{uuid}")
+    @PutMapping("end-task/{uuid}")
     @Operation(summary = "Rota responsável pelo troca de finalização do item")
     @ApiResponses(value = {
         @ApiResponse(
@@ -143,7 +172,11 @@ public class TodoItemsController {
         )
     })
     public ResponseEntity<TodoItem> putMethodName(@PathVariable UUID uuid) {
-        return ResponseEntity.ok(todoItemService.changeTaskStatus(uuid));
+        try {
+            return ResponseEntity.ok(todoItemService.changeTaskStatus(uuid));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
     @DeleteMapping("/{uuid}")
@@ -161,8 +194,12 @@ public class TodoItemsController {
         )
     })
     public ResponseEntity<Void> deleteItem(@PathVariable UUID uuid){
-        todoItemService.delete(uuid);
-        return ResponseEntity.ok().build();
+        try {
+            todoItemService.delete(uuid);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
     
     
