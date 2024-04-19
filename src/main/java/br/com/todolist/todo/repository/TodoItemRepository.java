@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 import br.com.todolist.todo.model.TodoItem;
 @Repository
 public interface TodoItemRepository extends JpaRepository<TodoItem,UUID>{
-    List<TodoItem> findByTitleContaining(String title);
+    List<TodoItem> findByTitleContainingIgnoreCase(String title);
 }

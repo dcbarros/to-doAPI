@@ -40,7 +40,7 @@ public class TodoItemImpl implements TodoItemService{
 
     @Override
     public List<TodoItem> getItemsByTitle(String title) {
-        return todoItemRepository.findByTitleContaining(title);
+        return todoItemRepository.findByTitleContainingIgnoreCase(title);
     }
 
     @Override
